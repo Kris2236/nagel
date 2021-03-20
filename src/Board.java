@@ -28,34 +28,17 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
         // update vel
         for (int y = 0; y < points[0].length; ++y) {
             for (int x = 0; x < points.length; ++x) {
-                // TODO
+
                 if (points[x][y].getType() == 0)
                     continue;
 
+                points[x][y].randomizeVel();
+
                 int dist = distanceToNextCar(x, y);
-                System.out.print("[" + x + "]: " + points[x][y].getVel());
-
-                if(isCollision(x,y) && points[x][y].getVel() == dist) {
-                    points[x][y].slowDown(1);
-                } else {
-                    if(!isCollision(x,y) && points[x][y].getVel() < 5) {
-                        // speed up
-                        points[x][y].incVel();
-                    }
-
-                    if(isCollision(x,y)) {
-                        // slow down
-                        points[x][y].slowDown(dist);
-                    }
-                }
-                
-                System.out.println(" -> " + points[x][y].getVel());
-
-                //x += distanceToNextCar(x, y);
+                points[x][y].updateVel(dist);
+                //x+=dist;
             }
         }
-
-        System.out.println("------------------");
 
         // update pos
         int vel;
@@ -72,11 +55,9 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
 
                  points[(x+vel) % points.length][y].move(vel);
                  points[x][y].clear();
-                 System.out.println("[" + x + "] -> [" + (x+vel) +"]: " + vel);
                  x += vel;
             }
         }
-        System.out.println("===========");
 
         this.repaint();
     }
@@ -84,23 +65,12 @@ public class Board extends JComponent implements MouseInputListener, ComponentLi
     private int distanceToNextCar(int x, int y) {
         int dist;
 
-        for (dist=1; dist<=points[x][y].getVel(); dist++)
+        for (dist=1; dist<=points[x][y].getMaxVel(); dist++)
             if (points[(x + dist)%points[x].length][y].getType() == 1)
                 return dist;
 
         return dist;
     }
-
-    private boolean isCollision(int x,int y) {
-        int dist;
-
-        for (dist=1; dist<=points[x][y].getVel(); dist++)
-            if (points[(x+dist) % points[x].length][y].getType() == 1)
-                return true;
-
-        return false;
-    }
-
 
     public void clear() {
         for (int x = 0; x < points.length; ++x)

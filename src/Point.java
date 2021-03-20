@@ -1,7 +1,10 @@
+import java.util.Random;
+
 public class Point {
 
     private int type;
     private int vel;
+    public static int maxVel = 5;
 
 
     public Point(){
@@ -17,6 +20,10 @@ public class Point {
         this.type = type;
     }
 
+    public int getMaxVel() {
+        return maxVel;
+    }
+
     public int getVel() {
         return vel;
     }
@@ -30,12 +37,20 @@ public class Point {
     }
 
     public void slowDown(int diff) {
-        this.vel -= diff;
+        this.vel = diff;
+    }
+
+    public void randomizeVel() {
+        // Slow down, p = 50%
+        if(vel > 0 && (new Random().nextInt(2) == 1))
+            vel -=1;
     }
 
     public void clicked() {
-        setType(1);
-        setVel(0);
+        if(type == 0) {
+            setType(1);
+            setVel(0);
+        }
     }
 
     public void move(int vel) {
@@ -48,11 +63,12 @@ public class Point {
         setVel(0);
     }
 
-    public void updateVel() {
+    public void updateVel(int dist) {
 
-        if (vel < 5)
-            vel++;
+        if(getVel() < dist)
+            incVel();
 
-        // else
+        if(getVel() >= dist)
+            slowDown(dist-1);
     }
 }
